@@ -1,0 +1,10 @@
+{
+  "name": "google-cloud-build-slack",
+  "version": "0.0.1",
+  "description": "Slack integration for Google Cloud Build, using Google Cloud Functions",
+  "main": "index.js",
+  "npm run" : "npm run index.js",
+  "dependencies": {
+    "@slack/client": "4.8.0"
+  }
+}
