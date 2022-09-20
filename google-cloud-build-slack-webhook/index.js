@@ -45,19 +45,16 @@ const createSlackMessage = (build) => {
   const logUrl = build.logUrl;
 
   return {
-    text: `${statusMessage} for Cloud Build Trigger Name: \`${cloudBuildTriggerName}\` \nRepo Name : \`${gitRepoName}\` Git Branch : \`${gitBranchName}\``,
-    blocks: [
-      {
-        type: 'section',
-        text: {
-          type: 'mrkdwn',
-          text: `${statusMessage} for *${build.projectId}*.`
-        }
-      }
-    ],
     attachments: [
       {
         blocks: [
+          {
+            type: 'section',
+            text: {
+              type: 'mrkdwn',
+              text: `${statusMessage} for Cloud Build Trigger Name: \`${cloudBuildTriggerName}\``
+            }
+          },
           {
             type: 'section',
             text: {
@@ -70,7 +67,7 @@ const createSlackMessage = (build) => {
             elements: [
               {
                 type: 'mrkdwn',
-                text: `*Branch:* <https://github.com/solarconnect/${gitBranchName}/tree/${gitBranchName}|${gitBranchName}>`
+                text: `*Branch:* <https://github.com/solarconnect/${gitRepoName}/tree/${gitBranchName}|${gitBranchName}>`
               },
               {
                 type: 'mrkdwn',
@@ -96,8 +93,6 @@ exports.subscribe = (pubSubEvent, context) => {
     return;
   }
 
-  console.log("pubSubEvent.data: ", build);
-
   const status = ['CANCELLED', 'QUEUED', 'WORKING', 'SUCCESS', 'FAILURE', 'INTERNAL_ERROR', 'TIMEOUT'];
   if (status.indexOf(build.status) === -1) {
     return;
@@ -106,7 +101,4 @@ exports.subscribe = (pubSubEvent, context) => {
   // Send message to Slack.
   const message = createSlackMessage(build);
   webhook.send(message);
-
-  const msg = createSlackMessage(pubSubEvent);
-  webhook.send(msg)
 };
