@@ -1,7 +1,10 @@
 const { IncomingWebhook } = require('@slack/client');
-const SLACK_WEBHOOK_URL = process.env.SLACK_WEBHOOK_URL;
 
-const webhook = new IncomingWebhook(SLACK_WEBHOOK_URL);
+const SLACK_DEV_CICD_MONITORING_WEBHOOK_URL = process.env.SLACK_DEV_CICD_MONITORING_WEBHOOK_URL;
+const SLACK_PROD_CICD_MONITORING_WEBHOOK_URL = process.env.SLACK_PROD_CICD_MONITORING_WEBHOOK_URL;
+const SLACK_TEST_CICD_MONITORING_WEBHOOK_URL = process.env.SLACK_TEST_CICD_MONITORING_WEBHOOK_URL;
+
+let webhook;
 
 const statusCodes = {
   CANCELLED: {
@@ -44,42 +47,53 @@ const createSlackMessage = (build) => {
   const commitSha = build.substitutions.SHORT_SHA;
   const logUrl = build.logUrl;
 
-  return {
+  const title = {
+    type: 'section',
+    text: {
+      type: 'mrkdwn',
+      text: `${statusMessage} for Cloud Build Trigger Name: \`${cloudBuildTriggerName}\`` // ${enlightenServiceCodes.DEVOPS.members.join(" ")
+    }
+  };
+
+  const buildStatus = {
+    type: 'section',
+    text: {
+      type: 'mrkdwn',
+      text: `*Build Log:* <${logUrl}|${cloudBuildId}>`
+    }
+  };
+
+  const context = {
+    type: 'context',
+    elements: [
+      {
+        type: 'mrkdwn',
+        text: `*Branch:* <https://github.com/solarconnect/${gitRepoName}/tree/${gitBranchName}|${gitBranchName}>`
+      },
+      {
+        type: 'mrkdwn',
+        text: `*Commit:* <https://github.com/solarconnect/${gitRepoName}/commit/${commitSha}|${commitSha}>`
+      }
+    ]
+  };
+
+  const message = {
     attachments: [
       {
         blocks: [
-          {
-            type: 'section',
-            text: {
-              type: 'mrkdwn',
-              text: `${statusMessage} for Cloud Build Trigger Name: \`${cloudBuildTriggerName}\``
-            }
-          },
-          {
-            type: 'section',
-            text: {
-              type: 'mrkdwn',
-              text: `*Build Log:* <${logUrl}|${cloudBuildId}>`
-            }
-          },
-          {
-            type: 'context',
-            elements: [
-              {
-                type: 'mrkdwn',
-                text: `*Branch:* <https://github.com/solarconnect/${gitRepoName}/tree/${gitBranchName}|${gitBranchName}>`
-              },
-              {
-                type: 'mrkdwn',
-                text: `*Commit:* <https://github.com/solarconnect/${gitRepoName}/commit/${commitSha}|${commitSha}>`
-              }
-            ]
-          }
+          title
         ],
         color: statusCodes[build.status].color
       }
     ]
   };
+
+  if(build.status.includes('SUCCESS' || 'CANCELLED' || "FAILURE" || 'INTERNAL_ERROR' || 'TIMEOUT')){
+    message.attachments[0].blocks.push(buildStatus);
+    message.attachments[0].blocks.push(context);
+  }
+
+  return message;
 }
 
 // subscribe is the main function called by Cloud Functions.
@@ -96,6 +110,16 @@ exports.subscribe = (pubSubEvent, context) => {
   const status = ['CANCELLED', 'QUEUED', 'WORKING', 'SUCCESS', 'FAILURE', 'INTERNAL_ERROR', 'TIMEOUT'];
   if (status.indexOf(build.status) === -1) {
     return;
+  }
+
+  const tags = build.tags;
+
+  if (tags.includes('DEV')){
+    webhook = new IncomingWebhook(SLACK_DEV_CICD_MONITORING_WEBHOOK_URL);
+  }else if(tags.includes('PROD')){
+    webhook = new IncomingWebhook(SLACK_PROD_CICD_MONITORING_WEBHOOK_URL);
+  }else{
+    webhook = new IncomingWebhook(SLACK_TEST_CICD_MONITORING_WEBHOOK_URL);
   }
 
   // Send message to Slack.
