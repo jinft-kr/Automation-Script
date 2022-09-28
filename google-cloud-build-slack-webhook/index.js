@@ -5,6 +5,23 @@ const SLACK_PROD_CICD_MONITORING_WEBHOOK_URL = process.env.SLACK_PROD_CICD_MONIT
 const SLACK_TEST_CICD_MONITORING_WEBHOOK_URL = process.env.SLACK_TEST_CICD_MONITORING_WEBHOOK_URL;
 
 let webhook;
+const slackGroupCodes = {
+  SQUERD : {
+    A : 'xxxxxxxxxx',
+    B : 'xxxxxxxxxx',
+    C : 'xxxxxxxxxx',
+    D : 'xxxxxxxxxx',
+    E : 'xxxxxxxxxx'
+  },
+  TEAM : {
+    IOT : 'S043RK0CQMV',
+    BACKEND : 'S0358E4V4US',
+    FRONTEND : 'S03B6LXRZ8V',
+    DATAPLATFORM : 'S04463J6UP5',
+    INFRASECURITY : 'S043ZHQF3HU',
+    DEVOPS : 'S03QYSLJYP3'
+  }
+};
 
 const statusCodes = {
   CANCELLED: {
@@ -46,6 +63,26 @@ const createSlackMessage = (build) => {
   const gitBranchName = build.substitutions.BRANCH_NAME;
   const commitSha = build.substitutions.SHORT_SHA;
   const logUrl = build.logUrl;
+  const tags = build.tags
+  let mention;
+
+  if(tags.includes('PROD')){
+    if(tags.includes('A')){
+      mention = "<!subteam^" + slackGroupCodes.SQUERD['A'] + ">, " + "<!subteam^" + slackGroupCodes.TEAM.DEVOPS + ">";
+    }else if(tags.includes('B')){
+      mention = "<!subteam^" + slackGroupCodes.SQUERD['B'] + ">, " + "<!subteam^" + slackGroupCodes.TEAM.DEVOPS + ">";
+    }else if(tags.includes('C')){
+      mention = "<!subteam^" + slackGroupCodes.SQUERD['C'] + ">, " + "<!subteam^" + slackGroupCodes.TEAM.DEVOPS + ">";
+    }else if(tags.includes('D')){
+      mention = "<!subteam^" + slackGroupCodes.SQUERD['D'] + ">, " + "<!subteam^" + slackGroupCodes.TEAM.DEVOPS + ">";
+    }else if(tags.includes('E')){
+      mention = "<!subteam^" + slackGroupCodes.SQUERD['E'] + ">, " + "<!subteam^" + slackGroupCodes.TEAM.DEVOPS + ">";
+    }else{
+      mention = "<!subteam^" + slackGroupCodes.TEAM.DEVOPS + ">";
+    }
+  }else{
+    mention = '';
+  }
 
   const title = {
     type: 'section',
@@ -73,6 +110,10 @@ const createSlackMessage = (build) => {
       {
         type: 'mrkdwn',
         text: `*Commit:* <https://github.com/solarconnect/${gitRepoName}/commit/${commitSha}|${commitSha}>`
+      },
+      {
+        type: 'mrkdwn',
+        text: `*Mention:* ${mention}`
       }
     ]
   };
