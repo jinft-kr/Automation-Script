@@ -5,8 +5,16 @@ const SLACK_PROD_CICD_MONITORING_WEBHOOK_URL = process.env.SLACK_PROD_CICD_MONIT
 const SLACK_TEST_CICD_MONITORING_WEBHOOK_URL = process.env.SLACK_TEST_CICD_MONITORING_WEBHOOK_URL;
 
 let webhook;
+
 const slackGroupCodes = {
-  SQUERD : {
+  SQUERD_PO : {
+    A : 'xxxxxxxxxx',
+    B : 'xxxxxxxxxx',
+    C : 'xxxxxxxxxx',
+    D : 'xxxxxxxxxx',
+    E : 'xxxxxxxxxx'
+  },
+  SQUERD_DEVELOPER : {
     A : 'xxxxxxxxxx',
     B : 'xxxxxxxxxx',
     C : 'xxxxxxxxxx',
@@ -14,12 +22,12 @@ const slackGroupCodes = {
     E : 'xxxxxxxxxx'
   },
   TEAM : {
-    IOT : 'S043RK0CQMV',
-    BACKEND : 'S0358E4V4US',
-    FRONTEND : 'S03B6LXRZ8V',
-    DATAPLATFORM : 'S04463J6UP5',
-    INFRASECURITY : 'S043ZHQF3HU',
-    DEVOPS : 'S03QYSLJYP3'
+    IOT : 'xxxxxxxxxx',
+    BACKEND : 'xxxxxxxxxx',
+    FRONTEND : 'xxxxxxxxxx',
+    DATAPLATFORM : 'xxxxxxxxxx',
+    INFRASECURITY : 'xxxxxxxxxx',
+    DEVOPS : 'xxxxxxxxxx'
   }
 };
 
@@ -68,15 +76,15 @@ const createSlackMessage = (build) => {
 
   if(tags.includes('PROD')){
     if(tags.includes('A')){
-      mention = "<!subteam^" + slackGroupCodes.SQUERD['A'] + ">, " + "<!subteam^" + slackGroupCodes.TEAM.DEVOPS + ">";
+      mention = "<!subteam^" + slackGroupCodes.SQUERD_DEVELOPER['A'] + ">, " + "<!subteam^" + slackGroupCodes.SQUERD_PO['A'] + ">, " + "<!subteam^" + slackGroupCodes.TEAM.DEVOPS + ">";
     }else if(tags.includes('B')){
-      mention = "<!subteam^" + slackGroupCodes.SQUERD['B'] + ">, " + "<!subteam^" + slackGroupCodes.TEAM.DEVOPS + ">";
+      mention = "<!subteam^" + slackGroupCodes.SQUERD_DEVELOPER['B'] + ">, " + "<!subteam^" + slackGroupCodes.SQUERD_PO['B'] + ">, " + "<!subteam^" + slackGroupCodes.TEAM.DEVOPS + ">";
     }else if(tags.includes('C')){
-      mention = "<!subteam^" + slackGroupCodes.SQUERD['C'] + ">, " + "<!subteam^" + slackGroupCodes.TEAM.DEVOPS + ">";
+      mention = "<!subteam^" + slackGroupCodes.SQUERD_DEVELOPER['C'] + ">, " + "<!subteam^" + slackGroupCodes.SQUERD_PO['C'] + ">, " + "<!subteam^" + slackGroupCodes.TEAM.DEVOPS + ">";
     }else if(tags.includes('D')){
-      mention = "<!subteam^" + slackGroupCodes.SQUERD['D'] + ">, " + "<!subteam^" + slackGroupCodes.TEAM.DEVOPS + ">";
+      mention = "<!subteam^" + slackGroupCodes.SQUERD_DEVELOPER['D'] + ">, " + "<!subteam^" + slackGroupCodes.SQUERD_PO['D'] + ">, " + "<!subteam^" + slackGroupCodes.TEAM.DEVOPS + ">";
     }else if(tags.includes('E')){
-      mention = "<!subteam^" + slackGroupCodes.SQUERD['E'] + ">, " + "<!subteam^" + slackGroupCodes.TEAM.DEVOPS + ">";
+      mention = "<!subteam^" + slackGroupCodes.SQUERD_DEVELOPER['E'] + ">, " + "<!subteam^" + slackGroupCodes.SQUERD_PO['E'] + ">, " + "<!subteam^" + slackGroupCodes.TEAM.DEVOPS + ">";
     }else{
       mention = "<!subteam^" + slackGroupCodes.TEAM.DEVOPS + ">";
     }
