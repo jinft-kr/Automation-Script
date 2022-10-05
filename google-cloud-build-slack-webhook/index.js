@@ -26,31 +26,31 @@ const slackGroupCodes = {
 const statusCodes = {
   CANCELLED: {
     color: '#fbbc05',
-    text: 'Build cancelled'
+    text: '빌드 취소' // 'Build cancelled'
   },
   FAILURE: {
     color: '#ea4335',
-    text: 'Build failed'
+    text: '빌드 실패' //'Build failed'
   },
   INTERNAL_ERROR: {
     color: '#ea4335',
-    text: 'Internal error encountered during build'
+    text: '빌드 내부 오류' // 'Internal error encountered during build'
   },
   QUEUED: {
     color: '#fbbc05',
-    text: 'New build queued'
+    text: '빌드 대기' // 'New build queued'
   },
   SUCCESS: {
     color: '#34a853',
-    text: 'Build successfully completed'
+    text: '빌드 성공' // 'Build successfully completed'
   },
   TIMEOUT: {
     color: '#ea4335',
-    text: 'Build timed out'
+    text: '빌드 타임아웃' // 'Build timed out'
   },
   WORKING: {
     color: '#34a853',
-    text: 'New build in progress'
+    text: '빌드 시작' // 'New build in progress'
   }
 };
 
@@ -88,7 +88,7 @@ const createSlackMessage = (build) => {
     type: 'section',
     text: {
       type: 'mrkdwn',
-      text: `${statusMessage} for Cloud Build Trigger Name: \`${cloudBuildTriggerName}\`` // ${enlightenServiceCodes.DEVOPS.members.join(" ")
+      text: `[ ${statusMessage} ] for Cloud Build Trigger Name: \`${cloudBuildTriggerName}\`` // ${enlightenServiceCodes.DEVOPS.members.join(" ")
     }
   };
 
